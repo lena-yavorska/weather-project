@@ -53,4 +53,25 @@ body {
   .search-form {
     margin-bottom: 20px;
   }
+
+  .footer {
+    display: block;
+    text-align: center;
+    margin: 0 auto; 
+    font-size: 13px;
+  }
+
+  .open-source {
+    padding-top: 15px;
+    color: blue;
+    text-decoration: none;
+    font-size: 12px;
+  }
+
+  .open-source:hover {
+    text-decoration: underline;
+    color: #3F4C77;
+  }
+
+  
   
