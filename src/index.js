@@ -13,7 +13,7 @@ function formatDate(date) {
     let days = [
       "Sunday",
       "Monday",
-      "Tursday",
+      "Tuesday",
       "Wednesday",
       "Thursday",
       "Friday",
@@ -24,33 +24,52 @@ function formatDate(date) {
     return `${day} ${hours}:${minutes}`;
   }
 
-  function displayForecast() {
+  function formatDay(timestamp) {
+    let date = new Date(timestamp * 1000);
+    let day = date.getDay();
+    let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    return days[day];
+  }
+
+  function displayForecast(response) {
+    let forecast = response.data.daily;
+
     let forecastElement = document.querySelector("#forecast");
 
     let forecastHTML = `<div class="row">`;
-    let days = ["Mon", "Tur", "Wed", "Thu"];
-    days.forEach(function(day) {
+    forecast.forEach(function(forecastDay, index) {
+      if (index < 6) {
       forecastHTML = forecastHTML + `
             <div class="col-2">
               <div class="weather-forecast-date">
-                ${day}
+                ${formatDay(forecastDay.dt)}
               </div>
-              <img src="http://openweathermap.org/img/wn/04d@2x.png" alt="" width="42"><weather-forecast-temperatures></weather-forecast-temperatures>
+               ${index}
+              <img src="http://openweathermap.org/img/wn/${forecastDay.weather[0].icon}@2x.png" alt="" width="42"><weather-forecast-temperatures></weather-forecast-temperatures>
               <div class="weather-forecast-temperatures">
                 <span class="weather-forecast-temperatures-max">
-                  18°
+                ${Math.round(forecastDay.temp.max)}°
                 </span>
                 <span class="weather-forecast-temperatures-min">
-                  12°
+                ${Math.round(forecastDay.temp.min)}°
                 </span>
               </div>
             </div>
           `;
+      }
     })
           
           forecastHTML = forecastHTML+ `</div>`;
           forecastElement.innerHTML = forecastHTML;
           console.log(forecastHTML);
+  }
+
+  function getForecast(coordinates) {
+    console.log(coordinates);
+    let apiKey = "c819171fe0abdc14039af4ef5dda283b";
+    let  apiUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&units=metric`;
+    axios.get(apiUrl).then(displayForecast);
   }
   
   function displayWeatherCondition(response) {
@@ -67,10 +86,11 @@ function formatDate(date) {
     document.querySelector("#wind").innerHTML = Math.round(response.data.wind.speed);
     document.querySelector("#description").innerHTML = response.data.weather[0].main;
 
-    
     iconElement.setAttribute("src", `http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`);
-    iconElement.setAttribute("alt", response.data.weather[0].main);
-  }
+    iconElement.setAttribute("alt", response.data.weather[0].description);
+
+    getForecast(response.data.coord);
+    }
   
   function searchCity(city) {
     let apiKey = "c819171fe0abdc14039af4ef5dda283b";
@@ -135,4 +155,3 @@ function formatDate(date) {
   
   
   searchCity("Lisbon");
-  displayForecast();
